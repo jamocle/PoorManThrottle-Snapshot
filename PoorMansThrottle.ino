@@ -163,7 +163,6 @@
 static const bool DEBUG_AT_STARTUP = false;
 
 // ------------------------- Cached chip ID (eFuse MAC) -------------------------
-// Cached once at startup; used by BLE command 'I' (RAW reply: I:<hex>)
 static String gEfuseHex = "";
 
 // ------------------------- Firmware ID -------------------------
@@ -196,7 +195,7 @@ struct HwSnapshot {
   uint32_t dutyL;
 
   Direction hwDir;
-  int32_t hwThrottlePct;   // 0..100 derived from duty/max (ACTUAL HW)
+  int32_t hwThrottlePct;   
 };
 
 // ------------------------- Pins & PWM -------------------------
@@ -214,18 +213,18 @@ static const uint32_t PWM_MAX_DUTY = (1UL << PWM_RES_BITS) - 1;
 static bool pwmInitialized = false;
 
 // ------------------------- Fixed-point easing -------------------------
-static const int32_t P_SCALE = 1000; // mandatory
+static const int32_t P_SCALE = 1000; 
 
 // ------------------------- Timing constants -------------------------
 static const uint32_t FULL_MOMENTUM_ACCEL_MS = 30000; // full-scale 100 step
 static const uint32_t FULL_MOMENTUM_DECEL_MS = 35000;
-static const uint32_t FULL_QUICKRAMP_ACCEL_MS = 2500; // 0->100 in 4s (tune)
+static const uint32_t FULL_QUICKRAMP_ACCEL_MS = 2500; 
 static const uint32_t FULL_QUICKRAMP_DECEL_MS = 2500;
 static const uint32_t FULL_QUICKSTOP_MS      = 3000;
 static const uint32_t FULL_BRAKE_MS          = 15000;
 static const uint32_t DIR_CHANGE_DELAY_MS    = 2000;
 static const uint32_t BLE_GRACE_MS           = 15000;
-static const uint32_t GRACE_COUNTDOWN_LOG_PERIOD_MS = 1000; // log once per second in debug
+static const uint32_t GRACE_COUNTDOWN_LOG_PERIOD_MS = 1000; // log in debug
 static const uint32_t DEBUG_HW_SNAPSHOT_PERIOD_MS = 2000;
 static const bool DEBUG_PRINT_PERIODIC_ONLY_ON_MISMATCH = true;
 static const bool DEBUG_PRINT_STORED_ONLY_ON_MISMATCH = false;
@@ -248,44 +247,43 @@ static bool pendingSuppressKickOnce = false;
 // ------------------------- Motion/BLE state -------------------------
 static volatile bool debugMode = DEBUG_AT_STARTUP;
 
-// NOTE: "appliedThrottle/targetThrottle" remain the MAPPED (command) domain 0..100.
-// Actual HW domain is derived via FLOOR/CEILING remap.
-static int32_t appliedThrottle = 0;      // MAPPED 0..100
-static int32_t targetThrottle  = 0;      // MAPPED 0..100
+
+static int32_t appliedThrottle = 0;      
+static int32_t targetThrottle  = 0;      
 static Direction currentDirection = Direction::STOP;
 static Direction targetDirection  = Direction::STOP;
 
-// Ramp state (in MAPPED domain)
+// Ramp state 
 static bool rampActive = false;
 static uint32_t rampStartMs = 0;
 static uint32_t rampDurationMs = 0;
-static int32_t rampStartThrottle = 0;   // MAPPED
-static int32_t rampTargetThrottle = 0;  // MAPPED
+static int32_t rampStartThrottle = 0;   
+static int32_t rampTargetThrottle = 0;  
 static Direction rampDirection = Direction::STOP;
 static RampKind rampKind = RampKind::NONE;
 
 // Train Name
-static String cfgTrainName = "";   // persisted train name (no leading/trailing spaces)
+static String cfgTrainName = "";   // persisted train name
 
 // FLOOR/CEILING remap config
-static int32_t cfgMinStart = 22;   // HW floor percent (0..100). When >0, mapped 1..100 -> HW floor..ceiling.
-static int32_t cfgCeiling  = 90;   // HW ceiling percent (0..100). When 0, defaults to 100 (no cap).
+static int32_t cfgMinStart = 22;   // HW floor percent (0..100).
+static int32_t cfgCeiling  = 90;   // HW ceiling percent (0..100). 
 
-// Start assist config + state (KICK uses MAPPED throttle values)
+// Start assist config + state 
 static int32_t cfgKickThrottle = 0;
 static int32_t cfgKickMs = 0;
-static int32_t cfgKickRampDownMs = 80;     // default for 2-param K
-static int32_t cfgKickMaxApply   = 15;     // default for 2-param K
+static int32_t cfgKickRampDownMs = 80;     // default for 2-param Kick
+static int32_t cfgKickMaxApply   = 15;     // default for 2-param Kick
 
 static bool kickActive = false;
 static uint32_t kickEndMs = 0;
-static int32_t kickHoldThrottle = 0;       // MAPPED
+static int32_t kickHoldThrottle = 0;       
 static Direction kickDirection = Direction::STOP;
 
 // Post-kick continuation state (separate from reverse sequencing)
 static bool postKickPending = false;
 static Direction postKickDir = Direction::STOP;
-static int32_t postKickFinalThr = 0;       // MAPPED
+static int32_t postKickFinalThr = 0;       
 static bool postKickIsInstant = false;
 static bool postKickIsMomentum = false;
 static uint32_t postKickFullAccelMs = FULL_MOMENTUM_ACCEL_MS;
@@ -295,7 +293,7 @@ static uint32_t postKickFullDecelMs = FULL_MOMENTUM_DECEL_MS;
 static bool reversePending = false;
 static PendingStage pendingStage = PendingStage::NONE;
 static uint32_t pendingStageUntilMs = 0;
-static int32_t pendingFinalTargetThrottle = 0; // MAPPED
+static int32_t pendingFinalTargetThrottle = 0; 
 static Direction pendingFinalDirection = Direction::STOP;
 static bool pendingFinalIsInstant = false;
 static bool pendingFinalIsMomentum = false;
@@ -315,17 +313,16 @@ static NimBLEServer* pServerGlobal = nullptr;
 static bool printPeriodic = DEBUG_PRINT_PERIODIC_ONLY_ON_MISMATCH;
 
 // MTU-aware chunking state
-static uint16_t g_peerMtu = 23;  // default
+static uint16_t g_peerMtu = 23;  
 
 // ------------------------- Stop snap-to-zero after floor ramp (S/B/grace) -------------------------
 static bool stopSnapAfterRamp = false;
 static const char* stopSnapReason = "STOP-SNAP";
 
 // ------------------------- Forward decls (keep local, minimize churn) -------------------------
-static size_t getNotifyPayloadLimit(); // used by sanitizeTrainNameToFit()
+static size_t getNotifyPayloadLimit(); 
 
 // ------------------------- Advertising name helpers (TRAIN NAME -> ADV NAME) -------------------------
-// Behavior:
 // - If cfgTrainName is empty -> advertise FW_NAME
 // - If non-empty -> advertise cfgTrainName
 static String getAdvertisedName() {
@@ -361,7 +358,7 @@ static void restartAdvertisingWithName() {
   adv->stop();
 
   // Rebuild advertising payload cleanly
-  adv->reset();                       // <-- use this instead of clearData()
+  adv->reset();  // <-- use this instead of clearData()
   adv->addServiceUUID(SERVICE_UUID);
   adv->setName(advName.c_str());
 
@@ -410,7 +407,7 @@ static inline void ledInit() {
 
 // Call on RX while connected: briefly force LED OFF
 static inline void ledDipRx() {
-  if (!bleConnected) return;         // dips are only meaningful in solid-on mode
+  if (!bleConnected) return;         
   ledDipActive = true;
   ledDipUntilMs = millis() + (uint32_t)LED_DIP_MS_RX;
   ledWrite(false);
@@ -588,7 +585,7 @@ static uint32_t scaledDurationMs(uint32_t fullScaleMs, int32_t deltaThrottleAbs)
   return dur;
 }
 
-// ---- Obfuscation helper (debug-only logging for I command) ----
+// ---- Obfuscation helper ----
 static inline uint8_t rotl8(uint8_t x, uint8_t r) {
   r &= 7;
   return (uint8_t)((x << r) | (x >> ((8 - r) & 7)));
@@ -761,10 +758,10 @@ static int32_t mapMappedToHw(int32_t mappedThr) {
   if (ceilHw == floorHw) return floorHw;   // fixed output for any nonzero
 
   // Linear remap: mapped 1..100 -> HW floor..ceil
-  // HW = floor + (mapped-1) * (ceil-floor) / 99  (rounded)
+  // HW = floor + (mapped-1) * (ceil-floor) / 99  
   int32_t span = (ceilHw - floorHw);
   int32_t num  = (mappedThr - 1) * span;
-  int32_t hw   = floorHw + (num + (99 / 2)) / 99; // rounded
+  int32_t hw   = floorHw + (num + (99 / 2)) / 99; 
   return clampI32(hw, 0, 100);
 }
 
@@ -807,7 +804,6 @@ static inline int32_t expectedHwFromMapped(int32_t mapped) {
 static void dbgPrintf(const char* fmt, ...) {
   if (!debugMode) return;
 
-  // NOTE: big lines (like [THR]) can be long; bump if you ever see truncation.
   char line[768];
   int n = 0;
 
@@ -842,7 +838,7 @@ static void debugPrintln(const String& s) {
 }
 
 // ------------------------- Throttle change logging -------------------------
-static int32_t lastLoggedAppliedThrottle = -9999; // MAPPED
+static int32_t lastLoggedAppliedThrottle = -9999; 
 static Direction lastLoggedDirection = Direction::STOP;
 static const char* g_lastDbgReason = "BOOT";
 
@@ -944,7 +940,7 @@ static bool hwMatchesStored(const HwSnapshot& hw0) {
   // First check
   if (matchesOne(hw0)) return true;
 
-  // Patch 2: if we're in transition, re-sample once immediately to avoid one-tick readback artifacts
+  // if we're in transition, re-sample once immediately to avoid one-tick readback artifacts
   if (inTransition) {
     HwSnapshot hw1 = getHwSnapshot();
     if (matchesOne(hw1)) return true;
@@ -1005,7 +1001,6 @@ static void logThrottleChangeIfNeeded(const char* reason) {
     return;
   }
 
-  // Build deltas (for mismatch visibility)
   Direction storedDir = (appliedThrottle <= 0 || currentDirection == Direction::STOP)
                           ? Direction::STOP
                           : currentDirection;
@@ -1058,7 +1053,7 @@ static inline void setApplied(Direction dir, int32_t thrMapped, const char* reas
   // Debug-only: remember why the last state changed.
   g_lastDbgReason = reason;
 
-  // DO NOT log here anymore (hardware may not be updated yet).
+  // DO NOT log here anymore 
 }
 
 static inline void setTarget(Direction dir, int32_t thrMapped, const String& reason) {
