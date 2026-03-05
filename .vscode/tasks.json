@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "maui: Build Debug",
+      "type": "maui",
+      "configuration": "Debug",
+      "project": "PoorManThrottle.App",
+      "problemMatcher": ["$msCompile"]
+    }
+  ]
+}

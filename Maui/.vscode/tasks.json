@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "test: PoorManThrottle.Tests",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "${workspaceFolder}/PoorManThrottle.Tests/PoorManThrottle.Tests.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

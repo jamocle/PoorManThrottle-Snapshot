@@ -1,0 +1,191 @@
+############################################################
+# Build Folders
+############################################################
+
+bin/
+obj/
+out/
+artifacts/
+
+############################################################
+# User-specific files
+############################################################
+
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+*.vcxproj.user
+*.DotSettings.user
+
+############################################################
+# Visual Studio
+############################################################
+
+.vs/
+TestResults/
+*.VisualState.xml
+
+############################################################
+# VS Code (curated)
+############################################################
+
+# Ignore everything in any .vscode folder
+**/.vscode/*
+
+# Allow curated VS Code config files
+!**/.vscode/settings.json
+!**/.vscode/extensions.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+
+############################################################
+# Rider / ReSharper
+############################################################
+
+.idea/
+*.sln.iml
+_ReSharper*/
+*.DotSettings
+
+############################################################
+# Logs
+############################################################
+
+*.log
+logs/
+nlog.config
+
+############################################################
+# NuGet
+############################################################
+
+*.nupkg
+*.snupkg
+.nuget/packages/
+packages/
+
+############################################################
+# Publish output
+############################################################
+
+publish/
+wwwroot/dist/
+wwwroot/lib/
+
+############################################################
+# Secrets & Config
+############################################################
+
+appsettings.*.local.json
+appsettings.Development.json
+secrets.json
+*.pfx
+*.key
+*.cer
+
+############################################################
+# OS Generated
+############################################################
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+############################################################
+# MAUI / Xamarin Specific
+############################################################
+
+# Android
+*.apk
+*.ap_ 
+*.aab
+*.dex
+*.class
+*.keystore
+*.jks
+*.gradle
+.gradle/
+local.properties
+captures/
+
+# iOS
+*.ipa
+*.dSYM/
+*.mobileprovision
+DerivedData/
+*.xcworkspace
+*.xcuserdata/
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+
+# MacCatalyst
+*.app
+!PoorManThrottle.App/
+
+# Windows
+AppPackages/
+BundleArtifacts/
+Generated Files/
+*.appx
+*.appxbundle
+*.msix
+*.msixbundle
+*.appinstaller
+
+############################################################
+# Blazor / WebView / Frontend builds (if used in MAUI)
+############################################################
+
+node_modules/
+dist/
+build/
+coverage/
+
+############################################################
+# Entity Framework
+############################################################
+
+*.db
+*.sqlite
+*.sqlite3
+
+############################################################
+# Coverage / Test
+############################################################
+
+coverage/
+*.coverage
+*.coveragexml
+*.trx
+
+############################################################
+# Temporary
+############################################################
+
+*.tmp
+*.temp
+*.cache
+
+############################################################
+# BenchmarkDotNet
+############################################################
+
+BenchmarkDotNet.Artifacts/
+
+############################################################
+# GitHub / Azure Pipelines artifacts
+############################################################
+
+*.publishsettings
+
+wholecode.txt

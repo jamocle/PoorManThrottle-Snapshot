@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PoorManThrottle.App.Features.Terminal.FunctionKeyConfigPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    BackgroundColor="{StaticResource BrandWindowColor}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ===================== -->
+        <!-- HEADER BANNER (Row 0) -->
+        <!-- ===================== -->
+
+        <Grid
+            Grid.Row="0"
+            BackgroundColor="{StaticResource BrandBackground}"
+            Padding="16"
+            ColumnDefinitions="*"
+            RowDefinitions="Auto,Auto"
+            RowSpacing="4">
+
+            <Label
+                Grid.Row="0"
+                Text="{Binding TitleText}"
+                FontSize="18"
+                FontAttributes="Bold"
+                TextColor="{StaticResource BrandTextOnDark}" />
+
+        </Grid>
+
+        <!-- ===================== -->
+        <!-- MAIN CONTENT (Row 1) -->
+        <!-- ===================== -->
+
+        <VerticalStackLayout
+            Grid.Row="1"
+            Padding="16"
+            Spacing="12">
+
+            <Label
+                Text="Button Name"
+                TextColor="{StaticResource BrandWindowTextColor}" />
+
+            <Entry
+                Text="{Binding ButtonName}"
+                Placeholder="Button Text"
+                TextColor="{StaticResource BrandWindowTextColor}" />
+
+            <Label
+                Text="Command"
+                TextColor="{StaticResource BrandWindowTextColor}" />
+
+            <Entry
+                Text="{Binding Command}"
+                Placeholder="ASCII Command"
+                TextColor="{StaticResource BrandWindowTextColor}" />
+
+            <HorizontalStackLayout
+                Spacing="12"
+                HorizontalOptions="End">
+
+                <Button
+                    Text="Cancel"
+                    Command="{Binding CancelCommand}" />
+
+                <Button
+                    Text="Save"
+                    Command="{Binding SaveCommand}" />
+
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>

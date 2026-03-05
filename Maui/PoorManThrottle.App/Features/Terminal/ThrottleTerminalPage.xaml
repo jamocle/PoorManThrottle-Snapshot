@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PoorManThrottle.App.Features.Terminal.ThrottleTerminalPage"
+    x:Name="ThisPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="Throttle Terminal">
+
+    <Grid RowDefinitions="Auto,*,Auto,Auto,Auto"
+          BackgroundColor="{StaticResource BrandWindowColor}">
+
+        <!-- Header -->
+        <Grid Grid.Row="0"
+              Padding="12"
+              ColumnDefinitions="Auto,*"
+              BackgroundColor="{StaticResource BrandBackground}">
+
+            <ImageButton Grid.Column="0"
+                         Clicked="OnBackClicked"
+                         BackgroundColor="Transparent"
+                         WidthRequest="36"
+                         HeightRequest="36">
+                <ImageButton.Source>
+                    <FontImageSource Glyph="&#x276E;"
+                                     Size="22"
+                                     Color="White" />
+                </ImageButton.Source>
+            </ImageButton>
+
+            <VerticalStackLayout Grid.Column="1"
+                                 Spacing="2"
+                                 Padding="8,0,0,0">
+                <Label Text="Throttle Terminal"
+                       TextColor="White"
+                       FontSize="18" />
+                <Label Text="{Binding HeaderSubtitle}"
+                       TextColor="White"
+                       Opacity="0.9"
+                       FontSize="12" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Black unified console -->
+        <Grid Grid.Row="1"
+              BackgroundColor="{StaticResource TerminalWindowColor}"
+              Padding="8">
+
+            <CollectionView x:Name="OutputCollection"
+                            ItemsSource="{Binding OutputLines}"
+                            BackgroundColor="{StaticResource TerminalWindowColor}"
+                            ItemsUpdatingScrollMode="KeepLastItemInView">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Label FontFamily="Menlo"
+                               FontSize="12"
+                               LineBreakMode="WordWrap">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Prefix}" TextColor="{Binding PrefixColor}" />
+                                    <Span Text=" " />
+                                    <Span Text="{Binding Text}" TextColor="{StaticResource TerminalWindowTextColor}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+        </Grid>
+
+        <!-- Command entry (brand background around it) -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto"
+              Padding="12"
+              ColumnSpacing="10"
+              BackgroundColor="{StaticResource BrandWindowColor}">
+
+            <Entry Grid.Column="0"
+                   Placeholder="Enter ASCII Command"
+                   Text="{Binding CommandText}"
+                   ReturnType="Send"
+                   ReturnCommand="{Binding SendAsciiCommand}"
+                   IsEnabled="{Binding IsInputEnabled}"
+                   TextColor="{StaticResource BrandWindowTextColor}"
+                   BackgroundColor="{StaticResource BrandWindowColor}"/>
+
+            <Button Grid.Column="1"
+                    Text="Send"
+                    Command="{Binding SendAsciiCommand}"
+                    IsEnabled="{Binding IsInputEnabled}" />
+                    
+        </Grid>
+
+        <!-- Function keys (2 rows of 5) -->
+        <CollectionView x:Name="FunctionKeysView"
+                Grid.Row="3"
+                Grid.RowSpan="2"
+                ItemsSource="{Binding FunctionKeys}"
+                IsEnabled="{Binding IsInputEnabled}"
+                BackgroundColor="{StaticResource BrandWindowColor}"
+                Margin="12"
+                SelectionMode="None">
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="5"
+                                 HorizontalItemSpacing="10"
+                                 VerticalItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Button x:Name="KeyButton"
+                        Text="{Binding DisplayName}"
+                        IsEnabled="{Binding Source={x:Reference ThisPage}, Path=KeysEnabled}">
+
+                    <Button.Behaviors>
+                        <toolkit:TouchBehavior
+                            BindingContext="{Binding Source={x:Reference ThisPage}, Path=BindingContext}"
+                            IsEnabled="{Binding Source={x:Reference ThisPage}, Path=KeysEnabled}"
+                            Command="{Binding TapFunctionKeyCommand}"
+                            CommandParameter="{Binding Source={x:Reference KeyButton}, Path=BindingContext}"
+                            LongPressCommand="{Binding LongPressFunctionKeyCommand}"
+                            LongPressCommandParameter="{Binding Source={x:Reference KeyButton}, Path=BindingContext}"
+                            LongPressDuration="800" />
+                    </Button.Behaviors>
+
+                </Button>
+            </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+</ContentPage>

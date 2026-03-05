@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PoorManThrottle.App.Features.Scan.ScanPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:PoorManThrottle.App"
+    Title="Scan">
+
+    <Grid RowDefinitions="Auto,*,Auto"
+          Padding="16"
+          RowSpacing="12">
+
+        <!-- Row 0: Top controls -->
+        <Grid Grid.Row="0"
+            ColumnDefinitions="Auto,Auto,*,Auto"
+            ColumnSpacing="12"
+            VerticalOptions="Start">
+
+            <Button Grid.Column="0"
+                    Text="Scan"
+                    Command="{Binding ScanCommand}" />
+
+            <ActivityIndicator Grid.Column="1"
+                            IsRunning="{Binding IsScanning}"
+                            IsVisible="{Binding IsScanning}"
+                            Color="{StaticResource BrandWindowTextColor}" />
+
+            <Label Grid.Column="2"
+                Text="{Binding StatusText}"
+                VerticalTextAlignment="Center"
+                TextColor="{StaticResource BrandWindowTextColor}" />
+
+            <!-- Mode indicator dot (10x10), docked right -->
+            <Border x:Name="ModeDot"
+                    Grid.Column="3"
+                    WidthRequest="15"
+                    HeightRequest="15"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 5"
+                    VerticalOptions="Center"
+                    HorizontalOptions="End" />
+        </Grid>
+
+        <!-- Row 1: Devices list fills remaining space -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Devices}"
+                        BackgroundColor="{StaticResource BrandWindowColor}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <!-- Keep your existing template here.
+                         If you already have a template, paste it in this exact spot. -->
+
+                    <Grid Padding="8" ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
+                        <Label Grid.Row="0" Grid.Column="0"
+                               Text="{Binding Name}"
+                               FontSize="18"
+                               TextColor="{Binding NameColor}" />
+
+                        <Label Grid.Row="1" Grid.Column="0"
+                               Text="{Binding Id}"
+                               FontSize="12"
+                               Opacity="0.7" 
+                               TextColor="{StaticResource BrandWindowTextColor}"/>
+
+                        <Label Grid.Row="2" Grid.Column="0"
+                               Text="{Binding StateLabel}"
+                               FontSize="12"
+                               Opacity="0.8" 
+                               TextColor="{StaticResource BrandWindowTextColor}"/>
+                        
+                        <ActivityIndicator Grid.Row="0"
+                            Grid.RowSpan="3"
+                            Grid.Column="1"
+                            IsRunning="{Binding IsBusy}"
+                            IsVisible="{Binding IsBusy}"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            WidthRequest="22"
+                            HeightRequest="22"
+                            Margin="0,0,8,0" 
+                            Color="{StaticResource BrandWindowTextColor}"/>
+
+                        <Button Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
+                                Text="{Binding ButtonText}"
+                                IsEnabled="{Binding CanTapButton}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsOpenable}" Value="False">
+                                    <Setter Property="Command"
+                                            Value="{Binding BindingContext.ConnectCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsOpenable}" Value="True">
+                                    <Setter Property="Command"
+                                            Value="{Binding BindingContext.OpenCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}" />
+                                </DataTrigger>
+                            </Button.Triggers>
+
+                            <Button.CommandParameter>
+                                <Binding />
+                            </Button.CommandParameter>
+                        </Button>
+                    </Grid>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Row 2: Footer pinned to bottom -->
+        <Grid Grid.Row="2" ColumnDefinitions="*" VerticalOptions="End">
+            <Label Text="{x:Static local:App.AppVersion}"
+                   HorizontalOptions="Center"
+                   FontSize="12"
+                   Opacity="0.6" 
+                   TextColor="{StaticResource BrandWindowTextColor}"/>
+        </Grid>
+
+    </Grid>
+</ContentPage>

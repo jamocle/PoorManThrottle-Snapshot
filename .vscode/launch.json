@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "MAUI Debug (use {} target picker)",
+      "type": "maui",
+      "request": "launch",
+      "preLaunchTask": "maui: Build Debug",
+      "project": "PoorManThrottle.App"
+    }
+  ]
+}

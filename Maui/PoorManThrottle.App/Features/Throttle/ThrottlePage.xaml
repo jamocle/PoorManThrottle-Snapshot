@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="PoorManThrottle.App.Features.Throttle.ThrottlePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Throttle">
+
+    <Grid Padding="16"
+          RowDefinitions="*,Auto"
+          RowSpacing="0">
+
+        <!-- ===================== -->
+        <!-- MAIN CONTENT (Row 0) -->
+        <!-- ===================== -->
+
+        <VerticalStackLayout Grid.Row="0" Spacing="12">
+
+            <!-- Header + badge + reconnect banner -->
+            <Grid ColumnDefinitions="*,Auto"
+                  RowDefinitions="Auto,Auto"
+                  ColumnSpacing="12"
+                  RowSpacing="8">
+
+                <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                    <Label Text="{Binding HeaderText}"
+                           FontSize="18"
+                           TextColor="{StaticResource BrandWindowTextColor}" />
+                    <Label Text="{Binding ConnectionText}"
+                           FontSize="12"
+                           Opacity="0.7"
+                           TextColor="{StaticResource BrandWindowTextColor}" />
+                </VerticalStackLayout>
+
+                <!-- Connection badge -->
+                <Border Grid.Row="0"
+                        Grid.Column="1"
+                        Padding="10,6"
+                        BackgroundColor="{Binding ConnectionBadgeColor}"
+                        VerticalOptions="Center"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+
+                    <Label Text="{Binding ConnectionBadgeText}"
+                           TextColor="white"
+                           FontSize="12"
+                           FontAttributes="Bold" />
+                </Border>
+
+                <!-- Reconnecting banner -->
+                <Border Grid.Row="1"
+                        Grid.ColumnSpan="2"
+                        IsVisible="{Binding ShowReconnectingBanner}"
+                        Padding="10"
+                        BackgroundColor="#FFEDD5"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="10" />
+                    </Border.StrokeShape>
+
+                    <Label Text="{Binding ReconnectingBannerText}"
+                           TextColor="#9A3412"
+                           FontSize="12" />
+                </Border>
+            </Grid>
+
+            <!-- Throttle Card -->
+            <Border Padding="12"
+                    StrokeThickness="1"
+                    Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#303030}"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Throttle"
+                           FontSize="24"
+                           TextColor="{StaticResource BrandWindowTextColor}" />
+                    <Label Text="{Binding ThrottleValue}"
+                           FontSize="24"
+                           TextColor="{StaticResource BrandWindowTextColor}" />
+
+                    <Slider Minimum="0"
+                            Maximum="100"
+                            Value="{Binding ThrottleValue}"
+                            DragCompleted="OnSliderDragCompleted"
+                            ThumbColor="{StaticResource BrandBackground}" />
+
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="Forward"
+                                BackgroundColor="{Binding ForwardButtonColor}"
+                                Command="{Binding SetForwardCommand}" />
+                        <Button Text="Reverse"
+                                BackgroundColor="{Binding ReverseButtonColor}"
+                                Command="{Binding SetReverseCommand}" />
+                    </HorizontalStackLayout>
+
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="Stop" Command="{Binding StopCommand}" />
+                        <Button Text="Brake" Command="{Binding BrakeCommand}" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Terminal Preview -->
+            <Border MinimumHeightRequest="50"
+                    Padding="5"
+                    BackgroundColor="{StaticResource TerminalWindowColor}">
+                <VerticalStackLayout>
+                    <Label Text="Terminal:"
+                           FontSize="14"
+                           TextColor="{StaticResource TerminalWindowTextColor}" />
+                    <Label Text="{Binding LastReply}"
+                           FontSize="12"
+                           FontFamily="Menlo"
+                           TextColor="{StaticResource TerminalWindowTextColor}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Disconnect"
+                    Command="{Binding DisconnectCommand}" />
+
+            <!-- DEBUG -->
+            <Button x:Name="ForceDropButton"
+                    Text="Force Drop (Debug)"
+                    Clicked="OnForceDropClicked"
+                    IsVisible="False"/>
+
+        </VerticalStackLayout>
+
+
+        <!-- ===================== -->
+        <!-- FOOTER (Row 1)       -->
+        <!-- ===================== -->
+
+        <VerticalStackLayout Grid.Row="1"
+                             Spacing="6"
+                             VerticalOptions="End"
+                             Padding="0,6,0,0">
+
+            <!-- Thin divider -->
+            <BoxView HeightRequest="1"
+                     Opacity="0.25"
+                     BackgroundColor="{StaticResource Gray400}"
+                     HorizontalOptions="Fill" />
+
+            <!-- Smaller, subtle Terminal button -->
+            <Button Text="Open Terminal"
+                    Clicked="OnOpenTerminalClicked"
+                    FontSize="13"
+                    Padding="10,6"
+                    CornerRadius="16"
+                    BackgroundColor="Transparent"
+                    TextColor="{StaticResource BrandBackground}"
+                    HorizontalOptions="Center"
+                    MinimumHeightRequest="32" />
+        </VerticalStackLayout>
+
+    </Grid>
+
+</ContentPage>
